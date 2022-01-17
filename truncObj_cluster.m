@@ -496,8 +496,8 @@ fullfls[[All,All,-1]] = 0;
 Imflsfull = Im[fullfls/I];
 Imfls = Im[ReplacePart[\[Alpha]vecs, {_,-1} -> 0]/I];
 \[Beta]imsubtract = 2^18 3 \[Pi]^4 Table[sgridCheb[[si]]^-7 Sum[Imflsfull[[li, si, ni]] gammal[[li]] Cl1vals[[li]]^2, {li,1,Length@\[ScriptL]grid}], {si,constraintsgridImT},{ni,Length[\[Alpha]vecs[[1]]]}];
-\[Beta]impart=ImAmplitudeReduced[nmax] - \[Beta]imsubtract;
-(*\[Beta]impart=ImAmplitudeReduced[nmax];*)
+(*\[Beta]impart=ImAmplitudeReduced[nmax] - \[Beta]imsubtract;*)
+\[Beta]impart=ImAmplitudeReduced[nmax];
 \[Beta]scale=Join[{SetScale[nmax, 512 \[Pi]^4]},{-SetScale[nmax, 512 \[Pi]^4]}];
 
 alphaobj = Re[(2^19 3 \[Pi]^3 Table[dsgridCheb[[i]]/\[ScriptS][\[Rho]gridCheb[[i]]]^8 ((2^6 Gamma[7/2]^2)/\[Pi] (l!(l+7/2))/Gamma[l+7]) GegenbauerC[l,7/2,1]^2, {l,\[ScriptL]grid},{i, numPTS}]//Flatten) . Flatten[Imflsfull, 1]];
@@ -524,15 +524,14 @@ Print["End xml input file ..."];
 ClearAll[int,HSConstraintOPT];
 Print["pvm2sdp start ..."];
 
-Run["mpirun -v --oversubscribe -np "<>ToString[nnodes*ncpus]<>" pvm2sdp 1024 "<>fname<>".xml ./"<>fname ]; 
+Run["mpirun -v --use-hwthread-cpus -np "<>ToString[nnodes*ncpus]<>" pvm2sdp 1024 "<>fname<>".xml ./"<>fname ]; 
 DeleteFile[fname<>".xml"];
 
 Print["sdpb start ..."];
 
-Run["mpirun -v --oversubscribe -np "<>ToString[nnodes*ncpus]<>" sdpb -s ./"<>fname<>" --noFinalCheckpoint --checkpointInterval 10000  --precision 1000 --procsPerNode "<>ToString[ncpus]<>"  --maxRuntime 1072800 --maxIterations 100000 --initialMatrixScalePrimal 1e30 --initialMatrixScaleDual 1e30 --dualityGapThreshold 1e-12 --maxComplementarity 1e100 >> "<>fname<>".log"];
+Run["mpirun -v --use-hwthread-cpus -np "<>ToString[nnodes*ncpus]<>" sdpb -s ./"<>fname<>" --noFinalCheckpoint --checkpointInterval 10000  --precision 1000 --procsPerNode "<>ToString[ncpus]<>"  --maxRuntime 1072800 --maxIterations 100000 --initialMatrixScalePrimal 1e30 --initialMatrixScaleDual 1e30 --dualityGapThreshold 1e-12 --maxComplementarity 1e100 >> "<>fname<>".log"];
 Run["rm -r "<>fname];
 ];
-
 
 
 (*namerun=test;

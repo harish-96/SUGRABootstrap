@@ -551,14 +551,14 @@ Mreg=ToExpression[$CommandLine[[8]]];
 
 
 
-maxabk[Lmax,Nmax,Linfty,Mreg][ToString[namerun]<>"_"<>ToString[Lmax]<>"_"<>ToString[Nmax]<>"_"<>ToString[Linfty]];
+maxabk[Lmax,Nmax,Linfty,Mreg][ToString[namerun]<>"_"<>ToString[Lmax]<>"_"<>ToString[Nmax]<>"_"<>ToString[Linfty]<>"_"<>ToString[Log10[Mreg]]];
 
 
 ClearAll[importresultparallel,writeresultparallel]
-importresultparallel[fname_,Nmax_,Lmax_,Linfty_] :=
-importresultparallel[fname,Nmax,Lmax,Linfty]=Module[{res},
-res=If[FileExistsQ["/gpfs/hmurali/string_bootstrap/"<>fname<>"_"<>ToString[Lmax]<>"_"<>ToString[Nmax]<>"_"<>ToString[Linfty]<>"_out/y.txt"],
-Import["/gpfs/hmurali/string_bootstrap/"<>fname<>"_"<>ToString[Lmax]<>"_"<>ToString[Nmax]<>"_"<>ToString[Linfty]<>"_out/y.txt","Table"],
+importresultparallel[fname_,Nmax_,Lmax_,Linfty_,Mreg_] :=
+importresultparallel[fname,Nmax,Lmax,Linfty,Mreg]=Module[{res},
+res=If[FileExistsQ["/gpfs/hmurali/string_bootstrap/"<>fname<>"_"<>ToString[Lmax]<>"_"<>ToString[Nmax]<>"_"<>ToString[Linfty]<>"_"<>ToString[Log10[Mreg]]<>"_out/y.txt"],
+Import["/gpfs/hmurali/string_bootstrap/"<>fname<>"_"<>ToString[Lmax]<>"_"<>ToString[Nmax]<>"_"<>ToString[Linfty]<>"_"<>ToString[Log10[Mreg]]<>"_out/y.txt","Table"],
 Print["Chirp!_"<>ToString[Lmax]<>"_"<>ToString[Nmax]]];
 res2 = Join[res[[2;;,1]],{1}];
 pwfull = 1 + fullfls . res2;
@@ -570,16 +570,16 @@ integrandsExact = 2/Pi Table[(dsgridHSC / sgridHSC)[[i]], {i, 1000}] (ImAmplitud
 integrandstrunc = Re[(2^19 3 \[Pi]^3 Table[dsgridCheb[[i]]/\[ScriptS][\[Rho]gridCheb[[i]]]^8 ((2^6 Gamma[7/2]^2)/\[Pi] (l!(l+7/2))/Gamma[l+7]) GegenbauerC[l,7/2,1]^2, {l,\[ScriptL]grid},{i, numPTS}]//Flatten)  (Flatten[Imflsfull, 1] . res2)];
 
 Print[target[Nmax].res2];
-Export["/gpfs/hmurali/string_bootstrap/SUGRABootstrap3/"<>fname<>"pwIntegrands_"<>ToString[Lmax]<>"_"<>ToString[Nmax]<>"_"<>ToString[Linfty]<>".mat",
+Export["/gpfs/hmurali/string_bootstrap/SUGRABootstrap3/"<>fname<>"pwIntegrands_"<>ToString[Lmax]<>"_"<>ToString[Nmax]<>"_"<>ToString[Linfty]<>"_"<>ToString[Log10[Mreg]]<>".mat",
 {"Data: full alpha, trunc alpha, partial waves, integrands exact with ds, integrands exact No ds, integrands trunc with ds", target[Nmax].res2, alphaobj.res2, pwfull, integrandsExact, integrandsExactNods, integrandstrunc}];
-Export["/gpfs/hmurali/string_bootstrap/SUGRABootstrap3/"<>fname<>"Out_"<>ToString[Lmax]<>"_"<>ToString[Nmax]<>"_"<>ToString[Linfty]<>".txt", ToString[FullForm[Table[res[[i]][[1]],{i,1,Length[res]}]]]]
+Export["/gpfs/hmurali/string_bootstrap/SUGRABootstrap3/"<>fname<>"Out_"<>ToString[Lmax]<>"_"<>ToString[Nmax]<>"_"<>ToString[Linfty]<>"_"<>ToString[Log10[Mreg]]<>".txt", ToString[FullForm[Table[res[[i]][[1]],{i,1,Length[res]}]]]]
 ]
 
 
 importresultparallel[ToString[namerun],Nmax,Lmax,Linfty];
 
 Block[{filename},
-filename = ToString[namerun]<>"_"<>ToString[Lmax]<>"_"<>ToString[Nmax]<>"_"<>ToString[Linfty];
+filename = ToString[namerun]<>"_"<>ToString[Lmax]<>"_"<>ToString[Nmax]<>"_"<>ToString[Linfty]<>"_"<>ToString[Log10[Mreg]];
 Run["mv "<>filename<>"_out/out.txt res_"<>filename<>".txt"];
 Run["rm -r "<>filename<>"_out"];
 Run["rm -r "<>filename<>".ck"];]
